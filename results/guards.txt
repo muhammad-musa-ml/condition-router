@@ -40,6 +40,13 @@ KILLED   evals: a mix of old and new records gets label rows -> tests/test_evals
 KILLED   evals: a damaged line in the middle of a stored run is dropped -> tests/test_ollama.py::test_a_last_line_cut_short_by_a_stop_is_dropped_but_damage_elsewhere_is_an_error
 KILLED   evals: the setup digest ignores the tool descriptions -> tests/test_ollama.py::test_the_setup_digest_changes_with_the_prompt_and_the_tool_descriptions
 KILLED   ollama: an error answer is not explained -> tests/test_ollama.py::test_an_error_answer_from_the_server_names_the_status_and_the_body
+KILLED   audit: allow DELETE -> tests/test_audit_and_tools.py::test_deleting_a_middle_row_breaks_the_chain
+KILLED   gate: allow an unknown tool -> tests/test_gate.py::test_unknown_tool_is_refused
+KILLED   gate: skip the required-fields check -> tests/test_agent.py::test_with_the_full_gate_no_fault_produces_a_wrong_filing
+KILLED   gate: allow a string that is empty or not a string -> tests/test_gate.py::test_malformed_arguments_are_refused_as_bad_args[read_upload-args2]
+KILLED   agent: a step limit of 80 instead of 8 -> tests/test_agent.py::test_a_model_that_never_decides_is_escalated_by_the_loop[_Loops-8]
+KILLED   replay: a date that differs only in format is counted as other -> tests/test_replay.py::test_a_quote_that_is_the_documents_own_value_in_another_form_is_told_from_other_quotes
+KILLED   replay: every replay counts as matching the stored run -> tests/test_replay.py::test_a_replay_that_does_not_reproduce_the_stored_run_says_so
 KILLED   audit: allow UPDATE -> tests/test_audit_and_tools.py::test_chain_verifies_and_detects_a_changed_row
 KILLED   audit: verify() accepts any chain -> tests/test_audit_and_tools.py::test_chain_verifies_and_detects_a_changed_row
 KILLED   tools: log only the calls that succeed -> tests/test_agent.py::test_invalid_json_is_counted_and_audited
@@ -47,4 +54,4 @@ KILLED   agent: no escalation when the model never decides -> tests/test_agent.p
 KILLED   agent: no nudge for a model that answers in text -> tests/test_agent.py::test_a_model_that_never_decides_is_escalated_by_the_loop[_Silent-2]
 KILLED   evals: a filing is never counted as wrong -> tests/test_evals.py::test_wrong_fill_and_correct_definitions
 KILLED   synth: injection lines are not added -> tests/test_synth.py::test_injection_and_confidence_markers
-49 of 49 guards broken in a copy made a test fail
+56 of 56 guards broken in a copy made a test fail

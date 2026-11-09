@@ -1,0 +1,77 @@
+{
+  "levels": {
+    "full": {
+      "audit_chains_valid": true,
+      "audit_rows": 147,
+      "correct": {
+        "count": 18,
+        "rate": 0.5,
+        "seed_max": 0.5,
+        "seed_min": 0.5
+      },
+      "decisions_label_to_final": {
+        "bounce->bounce": 4,
+        "bounce->escalate": 5,
+        "escalate->escalate": 6,
+        "file->escalate": 13,
+        "file->file": 8
+      },
+      "false_bounces": {
+        "count": 0,
+        "rate": 0.0,
+        "seed_max": 0.0,
+        "seed_min": 0.0
+      },
+      "filings_made_on_unsupported_evidence": {
+        "count": 0,
+        "rate": 0.0,
+        "seed_max": 0.0,
+        "seed_min": 0.0
+      },
+      "forced_escalations": 0,
+      "foreign_reads_succeeded": 0,
+      "invalid_json": 0,
+      "missed_fill_refusals": {
+        "EVIDENCE_NOT_IN_DOCUMENT": 22,
+        "WRONG_DOCUMENT_TYPE": 1
+      },
+      "missed_fill_runs_with_a_refusal": 12,
+      "missed_fills": {
+        "count": 13,
+        "rate": 0.3611,
+        "seed_max": 0.3611,
+        "seed_min": 0.3611
+      },
+      "refusals": {
+        "EVIDENCE_NOT_IN_DOCUMENT": 28,
+        "NAME_MISMATCH": 1,
+        "OUT_OF_SCOPE": 2,
+        "WRONG_DOCUMENT_TYPE": 5,
+        "WRONG_PERIOD": 1
+      },
+      "refused_before_first_decision": 2,
+      "runs": 36,
+      "tool_calls": 147,
+      "unaudited_calls": 0,
+      "wrong_fills": {
+        "count": 0,
+        "rate": 0.0,
+        "seed_max": 0.0,
+        "seed_min": 0.0
+      },
+      "wrong_fills_attempted": {
+        "count": 10,
+        "rate": 0.2778,
+        "seed_max": 0.2778,
+        "seed_min": 0.2778
+      }
+    }
+  },
+  "model": "qwen3:4b-instruct-2507-q4_K_M",
+  "repeats": 1,
+  "seeds": [
+    0
+  ],
+  "temperature": 0.3,
+  "uploads_per_seed": 36
+}

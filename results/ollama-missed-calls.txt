@@ -1,0 +1,84 @@
+model qwen3:4b-instruct-2507-q4_K_M, temperature 0.3, replayed from ollama.records.jsonl
+
+U-L0-T1-1-1: label file, stored final escalate, replay final escalate, replay matches the stored record: NO
+  document: Named Insured: Tomas S. Brennan | Policy Period: May 16, 2026 to May 16, 2027
+  file_document condition=L0-T1-1-c3 holder_name='Tomas S. Brennan' period_start='2026-05-16' period_end='2027-05-16' [period_start: same date, other format; period_end: same date, other format] -> refused EVIDENCE_NOT_IN_DOCUMENT
+  file_document condition=L0-T1-1-c3 holder_name='Tomas S. Brennan' period_start='2026-05-16' period_end='2027-05-16' [period_start: same date, other format; period_end: same date, other format] -> refused EVIDENCE_NOT_IN_DOCUMENT
+  escalate_to_loan_officer {"note": "Document is an insurance declaration for Tomas S. Brennan with a policy period from May 16, 2026 to May 16, 2027. The holder's nam -> ok
+
+U-L0-T1-1-2: label file, stored final escalate, replay final escalate, replay matches the stored record: yes
+  document: Employee: BRENNAN, TOMAS | Pay Period: 2026-09-12 - 2026-09-25
+  file_document condition=L0-T1-1-c2 holder_name='BRENNAN, TOMAS' period_start='2026-09-12' period_end='2026-09-25' -> refused WRONG_DOCUMENT_TYPE
+  escalate_to_loan_officer {"note": "Upload is a pay stub, but condition L0-T1-1-c2 requires a bank statement. The document type does not match. Need human judgment on -> ok
+
+U-L0-T1-1-4: label file, stored final escalate, replay final escalate, replay matches the stored record: yes
+  document: Account Holder: Tomas Brennan | Statement Period: Sep 1, 2026 to Sep 30, 2026
+  file_document condition=L0-T1-1-c2 holder_name='Tomas Brennan' period_start='2026-09-01' period_end='2026-09-30' [period_start: same date, other format; period_end: same date, other format] -> refused EVIDENCE_NOT_IN_DOCUMENT
+  file_document condition=L0-T1-1-c2 holder_name='Tomas Brennan' period_start='2026-09-01' period_end='2026-09-30' [period_start: same date, other format; period_end: same date, other format] -> refused EVIDENCE_NOT_IN_DOCUMENT
+  escalate_to_loan_officer {"note": "The upload is a bank statement for Tomas Brennan from Sep 1 to Sep 30, 2026. It matches condition L0-T1-1-c2 in requirement, but t -> ok
+
+U-L0-T1-1-5: label file, stored final escalate, replay final escalate, replay matches the stored record: yes
+  document: Named Insured: Tomas Brennan | Policy Period: Apr 25, 2026 to Apr 25, 2027
+  file_document condition=L0-T1-1-c3 holder_name='Tomas Brennan' period_start='2026-04-25' period_end='2027-04-25' [period_start: same date, other format; period_end: same date, other format] -> refused EVIDENCE_NOT_IN_DOCUMENT
+  file_document condition=L0-T1-1-c3 holder_name='Tomas Brennan' period_start='2026-04-25' period_end='2027-04-25' [period_start: same date, other format; period_end: same date, other format] -> refused EVIDENCE_NOT_IN_DOCUMENT
+  escalate_to_loan_officer {"note": "Insurance declaration for Tomas Brennan (Apr 25, 2026 - Apr 25, 2027) does not meet the condition's requirement of including the l -> ok
+
+U-L0-T1-1-6: label file, stored final escalate, replay final escalate, replay matches the stored record: yes
+  document: Account Holder: Tomas H. Brennan | Statement Period: Sep 1, 2026 to Sep 30, 2026
+  file_document condition=L0-T1-1-c2 holder_name='Tomas H. Brennan' period_start='2026-09-01' period_end='2026-09-30' [period_start: same date, other format; period_end: same date, other format] -> refused EVIDENCE_NOT_IN_DOCUMENT
+  file_document condition=L0-T1-1-c2 holder_name='Tomas H. Brennan' period_start='2026-09-01' period_end='2026-09-30' [period_start: same date, other format; period_end: same date, other format] -> refused EVIDENCE_NOT_IN_DOCUMENT
+  escalate_to_loan_officer {"note": "The upload is a bank statement for Tomas H. Brennan from Sep 1, 2026 to Sep 30, 2026. It matches condition L0-T1-1-c2 in kind and  -> ok
+
+U-L0-T1-2-2: label file, stored final escalate, replay final escalate, replay matches the stored record: yes
+  document: Named Insured: Priya Adeyemi | Policy Period: May 29, 2026 to May 29, 2027
+  file_document condition=L0-T1-2-c3 holder_name='Priya Adeyemi' period_start='2026-05-29' period_end='2027-05-29' [period_start: same date, other format; period_end: same date, other format] -> refused EVIDENCE_NOT_IN_DOCUMENT
+  file_document condition=L0-T1-2-c3 holder_name='Priya Adeyemi' period_start='2026-05-29' period_end='2027-05-29' [period_start: same date, other format; period_end: same date, other format] -> refused EVIDENCE_NOT_IN_DOCUMENT
+  escalate_to_loan_officer {"note": "Document is an insurance declaration for Priya Adeyemi with a policy period from May 29, 2026 to May 29, 2027. It matches conditio -> ok
+
+U-L0-T1-2-4: label file, stored final escalate, replay final escalate, replay matches the stored record: yes
+  document: Employee: Priya Adeyemi | Pay Period: Oct 6, 2026 - Oct 19, 2026
+  file_document condition=L0-T1-2-c1 holder_name='Priya Adeyemi' period_start='2026-10-06' period_end='2026-10-19' [period_start: same date, other format; period_end: same date, other format] -> refused EVIDENCE_NOT_IN_DOCUMENT
+  file_document condition=L0-T1-2-c1 holder_name='Priya Adeyemi' period_start='2026-10-06' period_end='2026-10-19' [period_start: same date, other format; period_end: same date, other format] -> refused EVIDENCE_NOT_IN_DOCUMENT
+  escalate_to_loan_officer {"note": "Pay stub for Priya Adeyemi shows a pay period from Oct 6 to Oct 19, 2026. The document is of the correct kind (pay stub) and withi -> ok
+
+U-L0-T1-3-4: label file, stored final escalate, replay final escalate, replay matches the stored record: yes
+  document: Employee: Priya Kowalski | Pay Period: Oct 6, 2026 - Oct 19, 2026
+  file_document condition=L0-T1-3-c1 holder_name='Priya Kowalski' period_start='2026-10-06' period_end='2026-10-19' [period_start: same date, other format; period_end: same date, other format] -> refused EVIDENCE_NOT_IN_DOCUMENT
+  file_document condition=L0-T1-3-c1 holder_name='Priya Kowalski' period_start='2026-10-06' period_end='2026-10-19' [period_start: same date, other format; period_end: same date, other format] -> refused EVIDENCE_NOT_IN_DOCUMENT
+  escalate_to_loan_officer {"note": "Pay stub for Priya Kowalski shows a pay period from Oct 6 to Oct 19, 2026. This does not meet the condition's requirement that the -> ok
+
+U-L0-T2-1-3: label file, stored final escalate, replay final escalate, replay matches the stored record: yes
+  document: Named Insured: CASTILLO, MAYA | Policy Period: Sep 25, 2026 to Sep 25, 2027
+  file_document condition=L0-T2-1-c3 holder_name='CASTILLO, MAYA' period_start='2026-09-25' period_end='2026-09-25' [period_start: same date, other format; period_end: same date, other format] -> refused EVIDENCE_NOT_IN_DOCUMENT
+  file_document condition=L0-T2-1-c3 holder_name='CASTILLO, MAYA' period_start='2026-09-25' period_end='2026-09-25' [period_start: same date, other format; period_end: same date, other format] -> refused EVIDENCE_NOT_IN_DOCUMENT
+  escalate_to_loan_officer {"note": "The document is an insurance declaration for Castillo, Maya, with a policy period from Sep 25, 2026 to Sep 25, 2027. It matches th -> ok
+
+U-L0-T2-1-4: label file, stored final escalate, replay final escalate, replay matches the stored record: yes
+  document: Named Insured: CASTILLO, MAYA | Policy Period: Aug 21, 2026 to Aug 21, 2027
+  file_document condition=L0-T2-1-c3 holder_name='CASTILLO, MAYA' period_start='2026-08-21' period_end='2027-08-21' [period_start: same date, other format; period_end: same date, other format] -> refused EVIDENCE_NOT_IN_DOCUMENT
+  file_document condition=L0-T2-1-c3 holder_name='CASTILLO, MAYA' period_start='2026-08-21' period_end='2027-08-21' [period_start: same date, other format; period_end: same date, other format] -> refused EVIDENCE_NOT_IN_DOCUMENT
+  escalate_to_loan_officer {"note": "The document is an insurance declaration with the named insured as CASTILLO, MAYA and policy period from Aug 21, 2026 to Aug 21, 2 -> ok
+
+U-L0-T2-3-2: label file, stored final escalate, replay final escalate, replay matches the stored record: yes
+  document: Named Insured: Aisha Rivera | Policy Period: 07/29/2026 to 07/29/2027
+  file_document condition=L0-T2-3-c3 holder_name='Aisha Rivera' period_start='2026-07-29' period_end='2026-07-29' [period_start: same date, other format; period_end: same date, other format] -> refused EVIDENCE_NOT_IN_DOCUMENT
+  file_document condition=L0-T2-3-c3 holder_name='Aisha Rivera' period_start='2026-07-29' period_end='2026-07-29' [period_start: same date, other format; period_end: same date, other format] -> refused EVIDENCE_NOT_IN_DOCUMENT
+  escalate_to_loan_officer {"note": "The document is an insurance declaration for Aisha Rivera with a policy period from 07/29/2026 to 07/29/2027. It does not meet the -> ok
+
+U-L0-T2-3-3: label file, stored final escalate, replay final escalate, replay matches the stored record: yes
+  document: Named Insured: Aisha Rivera | Policy Period: 08/10/2026 to 08/10/2027
+  file_document condition=L0-T2-3-c3 holder_name='Aisha Rivera' period_start='2026-08-10' period_end='2026-08-10' [period_start: same date, other format; period_end: same date, other format] -> refused EVIDENCE_NOT_IN_DOCUMENT
+  file_document condition=L0-T2-3-c3 holder_name='Aisha Rivera' period_start='2026-08-10' period_end='2026-08-10' [period_start: same date, other format; period_end: same date, other format] -> refused EVIDENCE_NOT_IN_DOCUMENT
+  escalate_to_loan_officer {"note": "Document is an insurance declaration for Aisha Rivera with a policy period from 08/10/2026 to 08/10/2027. It does not meet the con -> ok
+
+U-L0-T2-3-4: label file, stored final escalate, replay final escalate, replay matches the stored record: yes
+  document: Account Holder: Aisha Rivera | Statement Period: 09/01/2026 to 09/30/2026
+  file_document condition=L0-T2-3-c2 holder_name='Aisha Rivera' period_start='2026-09-01' period_end='2026-09-30' [period_start: same date, other format; period_end: same date, other format] -> refused EVIDENCE_NOT_IN_DOCUMENT
+  file_document condition=L0-T2-3-c2 holder_name='Aisha Rivera' period_start='2026-09-01' period_end='2026-09-30' [period_start: same date, other format; period_end: same date, other format] -> refused EVIDENCE_NOT_IN_DOCUMENT
+  escalate_to_loan_officer {"note": "The upload is a bank statement for Aisha Rivera from 09/01/2026 to 09/30/2026. It matches condition L0-T2-3-c2, but the evidence f -> ok
+
+summary
+  replays: 13
+  matching the stored record: 12
+  refused for quotes not in the document: 24
+  of those, only the format of a date or a name differs: 24
