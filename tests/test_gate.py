@@ -2,6 +2,7 @@ import pytest
 
 from condition_router.audit import AuditLog
 from condition_router.checks import kind_of, quote_fields
+from condition_router.gate import ADVICE
 from condition_router.models import FILE
 from condition_router.synth import make_world
 from condition_router.tools import Executor, Session
@@ -82,6 +83,25 @@ def test_malformed_arguments_are_refused_as_bad_args(name, args):
     assert ex.call(s, name, args)["error"] == "BAD_ARGS"
 
 
+@pytest.mark.parametrize("name", ["get_open_conditions", "read_upload", "escalate_to_loan_officer"])
+@pytest.mark.parametrize("args", [[], None, "", "U", 0])
+def test_arguments_that_are_not_an_object_are_refused_by_the_gate_with_its_own_message(name, args):
+    w, ex, s, uid = _run("scope")
+    assert ex.call(s, name, args) == {"error": "BAD_ARGS", "message": "args must be an object"}
+    assert ex.audit.rows()[-1]["outcome"] == "refused"
+
+
+def test_filing_before_reading_is_refused_and_a_second_filing_is_refused():
+    w, ex, s, uid = _run("scope", scenario="valid")
+    cond = w.truth[uid].condition_id
+    assert _file(ex, s, uid, cond, _evidence(w, uid))["error"] == "NOT_READ"
+    assert uid not in ex.decisions
+    ex.call(s, "read_upload", {"upload_id": uid})
+    assert _file(ex, s, uid, cond, _evidence(w, uid)).get("status") == "filed"
+    assert _file(ex, s, uid, cond, _evidence(w, uid))["error"] == "ALREADY_DECIDED"
+    assert ex.decisions[uid].action == FILE
+
+
 def test_unknown_tool_is_refused():
     w, ex, s, uid = _run("scope")
     assert ex.call(s, "delete_loan", {})["error"] == "UNKNOWN_TOOL"
@@ -116,6 +136,21 @@ def test_full_refuses_a_filing_the_document_does_not_support(scenario, code):
         out = _file(ex, s, uid, cond.id, _evidence(w, uid))
         assert out["error"] == (code if cond.kind == kind_of(w.uploads[uid].text) else "WRONG_DOCUMENT_TYPE")
     assert uid not in ex.decisions
+
+
+def test_full_explains_a_quoted_date_that_cannot_be_read_as_a_date():
+    for seed in range(6):
+        w = make_world(seed)
+        found = next((u for u, t in w.truth.items() if t.scenario == "valid" and kind_of(w.uploads[u].text) == "pay_stub"), None)
+        if found:
+            break
+    up = w.uploads[found]
+    ex, s = Executor(w, AuditLog(), "full"), Session(up.tenant_id, up.loan_id, found)
+    ex.call(s, "read_upload", {"upload_id": found})
+    evidence = {"holder_name": quote_fields(up.text)[0], "period_start": "Gross Pay", "period_end": "Net Pay"}
+    out = _file(ex, s, found, w.truth[found].condition_id, evidence)
+    assert out == {"error": "EVIDENCE_UNPARSEABLE", "message": ADVICE["EVIDENCE_UNPARSEABLE"]}
+    assert found not in ex.decisions
 
 
 def test_full_refuses_evidence_that_is_not_in_the_document():

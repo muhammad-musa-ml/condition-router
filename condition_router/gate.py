@@ -1,7 +1,7 @@
 """The gate between the model and the loan file. It runs before every tool call and returns a refusal or nothing.
 
-Levels: "off" runs no gate (the executor does that itself), "scope" checks arguments, ownership and order, and
-"full" also checks the evidence behind a filing against the document.
+Levels: "off" runs no gate (the executor still rejects a call it cannot run, such as an unknown tool), "scope" checks
+arguments, ownership and order, and "full" also checks the evidence behind a filing against the document.
 """
 from __future__ import annotations
 

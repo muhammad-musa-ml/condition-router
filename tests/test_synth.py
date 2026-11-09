@@ -29,10 +29,10 @@ def test_shape_and_tenant_ownership():
 
 
 def test_scenario_mix_is_close_to_the_weights():
-    counts = Counter(t.scenario for s in range(30) for t in make_world(s).truth.values())
+    counts = Counter(t.scenario for s in range(60) for t in make_world(s).truth.values())
     total = sum(counts.values())
     for name, weight in SCENARIOS:
-        assert abs(counts[name] / total - weight) < 0.06, name
+        assert abs(counts[name] / total - weight) < 0.025, name
 
 
 def test_injection_and_confidence_markers():

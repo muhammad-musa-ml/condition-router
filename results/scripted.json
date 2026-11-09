@@ -11,7 +11,20 @@
         "seed_max": 0.9722,
         "seed_min": 0.8333
       },
+      "decisions_label_to_final": {
+        "bounce->bounce": 110,
+        "bounce->escalate": 15,
+        "escalate->escalate": 69,
+        "file->escalate": 13,
+        "file->file": 153
+      },
       "false_bounces": {
+        "count": 0,
+        "rate": 0.0,
+        "seed_max": 0.0,
+        "seed_min": 0.0
+      },
+      "filings_made_on_unsupported_evidence": {
         "count": 0,
         "rate": 0.0,
         "seed_max": 0.0,
@@ -20,6 +33,10 @@
       "forced_escalations": 0,
       "foreign_reads_succeeded": 0,
       "invalid_json": 0,
+      "missed_fill_refusals": {
+        "EVIDENCE_NOT_IN_DOCUMENT": 7,
+        "WRONG_DOCUMENT_TYPE": 6
+      },
       "missed_fills": {
         "count": 13,
         "rate": 0.0361,
@@ -29,12 +46,13 @@
       "refusals": {
         "ALREADY_DECIDED": 14,
         "BAD_ARGS": 14,
-        "EVIDENCE_NOT_IN_DOCUMENT": 11,
+        "EVIDENCE_NOT_IN_DOCUMENT": 9,
         "NAME_MISMATCH": 1,
         "NOT_READ": 13,
         "OUT_OF_SCOPE": 17,
         "UNREADABLE": 4,
-        "WRONG_DOCUMENT_TYPE": 21
+        "WRONG_DOCUMENT_TYPE": 14,
+        "WRONG_PERIOD": 9
       },
       "refused_before_first_decision": 17,
       "runs": 360,
@@ -62,15 +80,31 @@
         "seed_max": 0.9722,
         "seed_min": 0.8333
       },
+      "decisions_label_to_final": {
+        "bounce->bounce": 110,
+        "bounce->file": 15,
+        "escalate->bounce": 2,
+        "escalate->escalate": 58,
+        "escalate->file": 9,
+        "file->bounce": 6,
+        "file->file": 160
+      },
       "false_bounces": {
         "count": 8,
         "rate": 0.0222,
         "seed_max": 0.0556,
         "seed_min": 0.0
       },
+      "filings_made_on_unsupported_evidence": {
+        "count": 37,
+        "rate": 0.1028,
+        "seed_max": 0.1944,
+        "seed_min": 0.0278
+      },
       "forced_escalations": 0,
       "foreign_reads_succeeded": 17,
       "invalid_json": 0,
+      "missed_fill_refusals": {},
       "missed_fills": {
         "count": 6,
         "rate": 0.0167,
@@ -104,15 +138,29 @@
         "seed_max": 1.0,
         "seed_min": 0.8333
       },
+      "decisions_label_to_final": {
+        "bounce->bounce": 110,
+        "bounce->file": 15,
+        "escalate->escalate": 60,
+        "escalate->file": 9,
+        "file->file": 166
+      },
       "false_bounces": {
         "count": 0,
         "rate": 0.0,
         "seed_max": 0.0,
         "seed_min": 0.0
       },
+      "filings_made_on_unsupported_evidence": {
+        "count": 37,
+        "rate": 0.1028,
+        "seed_max": 0.1944,
+        "seed_min": 0.0278
+      },
       "forced_escalations": 0,
       "foreign_reads_succeeded": 0,
       "invalid_json": 0,
+      "missed_fill_refusals": {},
       "missed_fills": {
         "count": 0,
         "rate": 0.0,

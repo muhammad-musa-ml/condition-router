@@ -25,6 +25,12 @@ class AuditLog:
                 f"CREATE TRIGGER IF NOT EXISTS audit_no_{verb.lower()} BEFORE {verb} ON audit "
                 "BEGIN SELECT RAISE(ABORT, 'audit is append-only'); END"
             )
+        # INSERT OR REPLACE would delete the row it replaces without firing the DELETE trigger.
+        self.db.execute(
+            "CREATE TRIGGER IF NOT EXISTS audit_no_replace BEFORE INSERT ON audit "
+            "WHEN EXISTS (SELECT 1 FROM audit WHERE seq = NEW.seq) "
+            "BEGIN SELECT RAISE(ABORT, 'audit is append-only'); END"
+        )
 
     def append(self, tenant_id, loan_id, upload_id, tool, args, outcome, code=""):
         row = self.db.execute("SELECT hash FROM audit ORDER BY seq DESC LIMIT 1").fetchone()

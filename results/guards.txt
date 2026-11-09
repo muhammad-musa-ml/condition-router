@@ -1,0 +1,49 @@
+KILLED   checks: ignore the confidence floor -> tests/test_checks.py::test_the_confidence_floor_is_at_or_above_0_75
+KILLED   checks: ignore the document kind -> tests/test_agent.py::test_with_the_full_gate_no_fault_produces_a_wrong_filing
+KILLED   checks: accept quotes that are not in the text -> tests/test_agent.py::test_with_the_full_gate_no_fault_produces_a_wrong_filing
+KILLED   checks: a quote may start or end inside a word or a number -> tests/test_checks.py::test_a_quote_may_not_start_or_end_inside_a_word_or_a_number
+KILLED   checks: a quote is compared without collapsing its whitespace -> tests/test_checks.py::test_a_quote_is_matched_after_its_whitespace_is_collapsed
+KILLED   checks: only the last date is looked for in the document -> tests/test_checks.py::test_each_of_the_three_quotes_must_be_in_the_document
+KILLED   checks: ignore the period rule -> tests/test_agent.py::test_with_the_full_gate_no_fault_produces_a_wrong_filing
+KILLED   checks: ignore the name rule -> tests/test_agent.py::test_with_the_full_gate_no_fault_produces_a_wrong_filing
+KILLED   checks: pay stub window excludes its first day -> tests/test_checks.py::test_period_rule_boundaries
+KILLED   checks: names match on first name only -> tests/test_checks.py::test_same_person_variants
+KILLED   gate: allow any upload id -> tests/test_agent.py::test_the_scope_level_stops_cross_tenant_reads_and_double_decisions
+KILLED   gate: allow a condition from another loan -> tests/test_gate.py::test_scope_refuses_a_condition_from_another_loan
+KILLED   gate: allow a decision before reading -> tests/test_gate.py::test_deciding_before_reading_is_refused
+KILLED   gate: allow a second decision -> tests/test_agent.py::test_the_scope_level_stops_cross_tenant_reads_and_double_decisions
+KILLED   gate: allow unknown argument names -> tests/test_gate.py::test_malformed_arguments_are_refused_as_bad_args[read_upload-args1]
+KILLED   gate: skip the enum check -> tests/test_gate.py::test_malformed_arguments_are_refused_as_bad_args[bounce_to_borrower-args4]
+KILLED   gate: skip the length limit -> tests/test_gate.py::test_malformed_arguments_are_refused_as_bad_args[escalate_to_loan_officer-args6]
+KILLED   gate: skip the document checks at the full level -> tests/test_agent.py::test_with_the_full_gate_no_fault_produces_a_wrong_filing
+KILLED   gate: allow arguments that are not an object -> tests/test_gate.py::test_arguments_that_are_not_an_object_are_refused_by_the_gate_with_its_own_message[args0-get_open_conditions]
+KILLED   specs: a filing is not a terminal tool -> tests/test_evals.py::test_with_the_full_gate_a_heavily_faulty_model_makes_no_wrong_filing
+KILLED   checks: quoted dates that cannot be read are not refused -> tests/test_checks.py::test_words_that_are_in_the_document_but_are_not_dates_are_unparseable_evidence
+KILLED   checks: confidence floor of 0.5 instead of 0.75 -> tests/test_checks.py::test_the_confidence_floor_is_at_or_above_0_75
+KILLED   evals: the first decision is taken from the last terminal call -> tests/test_evals.py::test_the_first_attempt_does_not_depend_on_the_gate_level
+KILLED   evals: other-tenant reads are never counted -> tests/test_evals.py::test_a_cross_tenant_read_counts_only_without_the_gate_and_is_a_refusal_before_the_decision
+KILLED   evals: every read counts as an other-tenant read -> tests/test_evals.py::test_a_cross_tenant_read_counts_only_without_the_gate_and_is_a_refusal_before_the_decision
+KILLED   evals: a valid upload that was not filed is not counted -> tests/test_evals.py::test_a_fabricated_filing_is_unsupported_below_full_and_a_missed_fill_at_full
+KILLED   evals: a late bounce is not counted as a false bounce -> tests/test_evals.py::test_a_late_bounce_is_a_false_bounce_only_when_nothing_stops_the_second_decision
+KILLED   evals: a refusal before the first decision is not counted -> tests/test_evals.py::test_a_cross_tenant_read_counts_only_without_the_gate_and_is_a_refusal_before_the_decision
+KILLED   evals: a filing the document check refuses is not counted -> tests/test_evals.py::test_a_fabricated_filing_is_unsupported_below_full_and_a_missed_fill_at_full
+KILLED   evals: the label is taken from the final decision -> tests/test_evals.py::test_an_eager_wrong_filing_is_attempted_at_every_level_and_made_only_below_full
+KILLED   evals: a stored run from another model is accepted -> tests/test_ollama.py::test_a_file_from_another_run_or_with_no_description_is_refused
+KILLED   evals: a stored file with no description is accepted -> tests/test_ollama.py::test_a_file_from_another_run_or_with_no_description_is_refused
+KILLED   tools: open conditions do not state their rule -> tests/test_audit_and_tools.py::test_open_conditions_state_the_period_rule_of_each_kind
+KILLED   gate: no advice for a quoted date that cannot be read -> tests/test_gate.py::test_full_explains_a_quoted_date_that_cannot_be_read_as_a_date
+KILLED   audit: allow INSERT OR REPLACE -> tests/test_audit_and_tools.py::test_replacing_a_row_with_insert_or_replace_is_refused_by_the_database
+KILLED   evals: the standing filing is taken from any upload -> tests/test_evals.py::test_the_unsupported_flag_judges_the_filing_for_this_upload_not_the_last_filing_in_the_log
+KILLED   evals: valid uploads that were not filed hide their refusals -> tests/test_evals.py::test_a_fabricated_filing_is_unsupported_below_full_and_a_missed_fill_at_full
+KILLED   evals: a mix of old and new records gets label rows -> tests/test_evals.py::test_the_summary_carries_label_to_final_rows_only_when_every_record_has_a_final_decision
+KILLED   evals: a damaged line in the middle of a stored run is dropped -> tests/test_ollama.py::test_a_last_line_cut_short_by_a_stop_is_dropped_but_damage_elsewhere_is_an_error
+KILLED   evals: the setup digest ignores the tool descriptions -> tests/test_ollama.py::test_the_setup_digest_changes_with_the_prompt_and_the_tool_descriptions
+KILLED   ollama: an error answer is not explained -> tests/test_ollama.py::test_an_error_answer_from_the_server_names_the_status_and_the_body
+KILLED   audit: allow UPDATE -> tests/test_audit_and_tools.py::test_chain_verifies_and_detects_a_changed_row
+KILLED   audit: verify() accepts any chain -> tests/test_audit_and_tools.py::test_chain_verifies_and_detects_a_changed_row
+KILLED   tools: log only the calls that succeed -> tests/test_agent.py::test_invalid_json_is_counted_and_audited
+KILLED   agent: no escalation when the model never decides -> tests/test_agent.py::test_a_model_that_never_decides_is_escalated_by_the_loop[_Silent-2]
+KILLED   agent: no nudge for a model that answers in text -> tests/test_agent.py::test_a_model_that_never_decides_is_escalated_by_the_loop[_Silent-2]
+KILLED   evals: a filing is never counted as wrong -> tests/test_evals.py::test_wrong_fill_and_correct_definitions
+KILLED   synth: injection lines are not added -> tests/test_synth.py::test_injection_and_confidence_markers
+48 of 48 guards broken in a copy made a test fail

@@ -1,0 +1,238 @@
+{
+  "fault_rate": 0.6,
+  "inject_follow": 0.5,
+  "levels": {
+    "full": {
+      "audit_chains_valid": true,
+      "audit_rows": 5034,
+      "correct": {
+        "count": 1187,
+        "rate": 0.8243,
+        "seed_max": 0.9722,
+        "seed_min": 0.6667
+      },
+      "decisions_label_to_final": {
+        "bounce->bounce": 354,
+        "bounce->escalate": 153,
+        "escalate->escalate": 272,
+        "file->escalate": 100,
+        "file->file": 561
+      },
+      "false_bounces": {
+        "count": 0,
+        "rate": 0.0,
+        "seed_max": 0.0,
+        "seed_min": 0.0
+      },
+      "filings_made_on_unsupported_evidence": {
+        "count": 0,
+        "rate": 0.0,
+        "seed_max": 0.0,
+        "seed_min": 0.0
+      },
+      "forced_escalations": 0,
+      "foreign_reads_succeeded": 0,
+      "invalid_json": 0,
+      "missed_fill_refusals": {
+        "EVIDENCE_NOT_IN_DOCUMENT": 49,
+        "WRONG_DOCUMENT_TYPE": 51
+      },
+      "missed_fills": {
+        "count": 100,
+        "rate": 0.0694,
+        "seed_max": 0.1944,
+        "seed_min": 0.0
+      },
+      "refusals": {
+        "ALREADY_DECIDED": 136,
+        "BAD_ARGS": 136,
+        "EVIDENCE_NOT_IN_DOCUMENT": 65,
+        "NAME_MISMATCH": 3,
+        "NOT_READ": 122,
+        "OUT_OF_SCOPE": 132,
+        "UNREADABLE": 37,
+        "WRONG_DOCUMENT_TYPE": 138,
+        "WRONG_PERIOD": 67
+      },
+      "refused_before_first_decision": 132,
+      "runs": 1440,
+      "tool_calls": 5034,
+      "unaudited_calls": 0,
+      "wrong_fills": {
+        "count": 0,
+        "rate": 0.0,
+        "seed_max": 0.0,
+        "seed_min": 0.0
+      },
+      "wrong_fills_attempted": {
+        "count": 261,
+        "rate": 0.1812,
+        "seed_max": 0.3889,
+        "seed_min": 0.0278
+      }
+    },
+    "off": {
+      "audit_chains_valid": true,
+      "audit_rows": 4480,
+      "correct": {
+        "count": 1080,
+        "rate": 0.75,
+        "seed_max": 0.8889,
+        "seed_min": 0.5278
+      },
+      "decisions_label_to_final": {
+        "bounce->bounce": 354,
+        "bounce->file": 153,
+        "escalate->bounce": 29,
+        "escalate->escalate": 186,
+        "escalate->file": 57,
+        "file->bounce": 70,
+        "file->file": 591
+      },
+      "false_bounces": {
+        "count": 99,
+        "rate": 0.0688,
+        "seed_max": 0.2222,
+        "seed_min": 0.0
+      },
+      "filings_made_on_unsupported_evidence": {
+        "count": 310,
+        "rate": 0.2153,
+        "seed_max": 0.4444,
+        "seed_min": 0.0556
+      },
+      "forced_escalations": 0,
+      "foreign_reads_succeeded": 132,
+      "invalid_json": 0,
+      "missed_fill_refusals": {},
+      "missed_fills": {
+        "count": 70,
+        "rate": 0.0486,
+        "seed_max": 0.1944,
+        "seed_min": 0.0
+      },
+      "refusals": {},
+      "refused_before_first_decision": 0,
+      "runs": 1440,
+      "tool_calls": 4480,
+      "unaudited_calls": 0,
+      "wrong_fills": {
+        "count": 261,
+        "rate": 0.1812,
+        "seed_max": 0.3889,
+        "seed_min": 0.0278
+      },
+      "wrong_fills_attempted": {
+        "count": 261,
+        "rate": 0.1812,
+        "seed_max": 0.3889,
+        "seed_min": 0.0278
+      }
+    },
+    "scope": {
+      "audit_chains_valid": true,
+      "audit_rows": 4724,
+      "correct": {
+        "count": 1179,
+        "rate": 0.8187,
+        "seed_max": 0.9722,
+        "seed_min": 0.6111
+      },
+      "decisions_label_to_final": {
+        "bounce->bounce": 354,
+        "bounce->file": 153,
+        "escalate->escalate": 215,
+        "escalate->file": 57,
+        "file->file": 661
+      },
+      "false_bounces": {
+        "count": 0,
+        "rate": 0.0,
+        "seed_max": 0.0,
+        "seed_min": 0.0
+      },
+      "filings_made_on_unsupported_evidence": {
+        "count": 310,
+        "rate": 0.2153,
+        "seed_max": 0.4444,
+        "seed_min": 0.0556
+      },
+      "forced_escalations": 0,
+      "foreign_reads_succeeded": 0,
+      "invalid_json": 0,
+      "missed_fill_refusals": {},
+      "missed_fills": {
+        "count": 0,
+        "rate": 0.0,
+        "seed_max": 0.0,
+        "seed_min": 0.0
+      },
+      "refusals": {
+        "ALREADY_DECIDED": 136,
+        "BAD_ARGS": 136,
+        "NOT_READ": 122,
+        "OUT_OF_SCOPE": 132
+      },
+      "refused_before_first_decision": 132,
+      "runs": 1440,
+      "tool_calls": 4724,
+      "unaudited_calls": 0,
+      "wrong_fills": {
+        "count": 261,
+        "rate": 0.1812,
+        "seed_max": 0.3889,
+        "seed_min": 0.0278
+      },
+      "wrong_fills_attempted": {
+        "count": 261,
+        "rate": 0.1812,
+        "seed_max": 0.3889,
+        "seed_min": 0.0278
+      }
+    }
+  },
+  "model": "scripted",
+  "seeds": [
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49
+  ],
+  "uploads_per_seed": 36
+}

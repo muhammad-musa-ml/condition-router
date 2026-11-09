@@ -3,7 +3,7 @@ import random
 
 import pytest
 
-from condition_router.agent import run_upload
+from condition_router.agent import FORCED_NOTE, run_upload
 from condition_router.audit import AuditLog
 from condition_router.models import BOUNCE, FILE
 from condition_router.scripted import FAULTS, ScriptedModel
@@ -13,9 +13,9 @@ from condition_router.tools import Executor
 LEVELS = ("off", "scope", "full")
 
 
-def _go(world, uid, level, fault=None):
+def _go(world, uid, level, fault=None, rng_seed=1):
     ex = Executor(world, AuditLog(), level)
-    model = ScriptedModel(world, uid, random.Random(1), inject_follow=0.0, force_fault=fault)
+    model = ScriptedModel(world, uid, random.Random(rng_seed), inject_follow=0.0, force_fault=fault)
     return ex, run_upload(model, ex, uid)
 
 
@@ -42,7 +42,7 @@ def test_with_the_full_gate_no_fault_produces_a_wrong_filing():
         w = make_world(seed)
         for uid in w.uploads:
             for fault in FAULTS + ("obey_injection",):
-                _, tr = _go(w, uid, "full", fault)
+                _, tr = _go(w, uid, "full", fault, rng_seed=f"{seed}/{uid}/{fault}")
                 assert not _wrong_fill(tr.final, w.truth[uid]), (seed, uid, fault)
 
 
@@ -85,7 +85,12 @@ class _Silent:
 
 
 class _Loops:
+    def __init__(self):
+        self.asked = 0
+
     def step(self, messages, tools):
+        self.asked += 1
+        assert self.asked <= 20, "the loop did not stop asking"
         return {"content": "", "tool_calls": [{"id": "c", "name": "get_open_conditions", "arguments": "{}"}]}
 
 
@@ -94,14 +99,34 @@ class _BrokenJson:
         return {"content": "", "tool_calls": [{"id": "c", "name": "read_upload", "arguments": '{"upload_id": '}]}
 
 
-@pytest.mark.parametrize("model,steps", [(_Silent(), 2), (_Loops(), 8), (_BrokenJson(), 8)])
+@pytest.mark.parametrize("model,steps", [(_Silent, 2), (_Loops, 8), (_BrokenJson, 8)])
 def test_a_model_that_never_decides_is_escalated_by_the_loop(model, steps):
     w = make_world(0)
     uid = next(iter(w.uploads))
     ex = Executor(w, AuditLog(), "full")
-    tr = run_upload(model, ex, uid)
+    tr = run_upload(model(), ex, uid)
     assert tr.forced and tr.steps == steps and tr.final.action == "escalate"
-    assert ex.audit.rows()[-1]["tool"] == "escalate_to_loan_officer" and ex.audit.verify()
+    last = ex.audit.rows()[-1]
+    assert last["tool"] == "escalate_to_loan_officer" and last["outcome"] == "ok" and ex.audit.verify()
+    assert json.loads(last["args"])["note"] == FORCED_NOTE
+
+
+class _Recorder:
+    def __init__(self):
+        self.seen = []
+
+    def step(self, messages, tools):
+        self.seen.append([dict(m) for m in messages])
+        return {"content": "I think this is fine.", "tool_calls": []}
+
+
+def test_a_reply_with_no_tool_calls_is_sent_back_without_a_tool_calls_field():
+    w = make_world(0)
+    uid = next(iter(w.uploads))
+    model = _Recorder()
+    run_upload(model, Executor(w, AuditLog(), "full"), uid)
+    sent = [m for m in model.seen[-1] if m["role"] == "assistant"]
+    assert len(sent) == 1 and "tool_calls" not in sent[0]
 
 
 def test_invalid_json_is_counted_and_audited():

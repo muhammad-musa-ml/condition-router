@@ -7,8 +7,8 @@ from __future__ import annotations
 import json
 import random
 
-from .checks import decide, quote_fields
-from .models import BOUNCE, ESCALATE, FILE
+from .checks import decide, kind_of, quote_fields
+from .models import BOUNCE, FILE
 from .synth import INJECTION_LINE
 
 FAULTS = ("eager_file", "fabricated", "skip_read", "cross_tenant", "double_decide", "bad_args")
@@ -60,7 +60,8 @@ class ScriptedModel:
         first = ("get_open_conditions", {})
         conds = self.loan.conditions
         if self.fault == "obey_injection":
-            return [first, read, self._file_call(conds[0], False)]
+            same_kind = next((c for c in conds if c.kind == kind_of(self.text)), conds[0])
+            return [first, read, self._file_call(same_kind, True)]
         if self.fault == "eager_file":
             return [first, read, self._file_call(conds[self.rng.randrange(len(conds))], True)]
         if self.fault == "fabricated":
@@ -79,10 +80,7 @@ class ScriptedModel:
             return [first, read, (name, {k: v for k, v in args.items() if k not in ("evidence", "message", "note")})]
         return [first, read, self._right_call()]
 
-    def _recover(self, last_call, error):
-        name = last_call[0]
-        if name not in ("file_document", "bounce_to_borrower", "escalate_to_loan_officer"):
-            return self.plan
+    def _recover(self, error):
         if error == "BAD_ARGS":
             return [self._right_call()]
         if error == "NOT_READ":
@@ -98,7 +96,7 @@ class ScriptedModel:
             if err and not self.recovered and self.last_call[0] in (
                     "file_document", "bounce_to_borrower", "escalate_to_loan_officer"):
                 self.recovered = True
-                self.plan = self._recover(self.last_call, err)
+                self.plan = self._recover(err)
         if not self.plan:
             return {"content": "Done.", "tool_calls": []}
         self.last_call = self.plan.pop(0)

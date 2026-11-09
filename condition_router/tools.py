@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from .checks import Decision
+from .checks import RULES, Decision
 from .gate import LEVELS, Gate
 from .models import BOUNCE, ESCALATE, FILE
 from .specs import TOOL_SPECS
@@ -53,7 +53,8 @@ class Executor:
     def _get_open_conditions(self, session):
         loan = self.world.loans[session.loan_id]
         return {"conditions": [
-            {"id": c.id, "kind": c.kind, "window_start": c.window_start.isoformat(), "window_end": c.window_end.isoformat()}
+            {"id": c.id, "kind": c.kind, "window_start": c.window_start.isoformat(),
+             "window_end": c.window_end.isoformat(), "rule": RULES[c.kind]}
             for c in loan.conditions
         ]}
 

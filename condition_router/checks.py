@@ -27,6 +27,13 @@ KIND_MARKERS = {
 }
 
 
+RULES = {
+    PAY_STUB: "The pay period must end inside the window.",
+    BANK_STATEMENT: "The statement period must start and end inside the window.",
+    INSURANCE_DEC: "The policy period must include the last day of the window.",
+}
+
+
 def parse_date(s) -> Optional[date]:
     s = s.strip()
     try:
@@ -104,6 +111,12 @@ def period_ok(cond, start, end) -> bool:
     return cond.window_start <= end <= cond.window_end
 
 
+def _quoted_in(quote, flat):
+    """True when the quote, with its whitespace collapsed, appears in the text and does not start or end inside a word or number."""
+    words = " ".join(quote.split())
+    return bool(words) and re.search(r"(?<!\w)" + re.escape(words) + r"(?!\w)", flat) is not None
+
+
 def check_evidence(text, ocr_confidence, cond, borrower, evidence) -> Optional[str]:
     """Return the reason a filing claim fails, or None. The claim is a quote the model made, not a fact the code read."""
     if ocr_confidence < LEGIBLE_AT:
@@ -112,7 +125,7 @@ def check_evidence(text, ocr_confidence, cond, borrower, evidence) -> Optional[s
         return WRONG_DOCUMENT_TYPE
     flat = " ".join(text.split())
     for key in ("holder_name", "period_start", "period_end"):
-        if " ".join(evidence[key].split()) not in flat:
+        if not _quoted_in(evidence[key], flat):
             return EVIDENCE_NOT_IN_DOCUMENT
     start, end = parse_date(evidence["period_start"]), parse_date(evidence["period_end"])
     if start is None or end is None:
@@ -132,7 +145,7 @@ class Decision:
 
 
 def decide(text, ocr_confidence, loan) -> Decision:
-    """The rule-based processor. It reads the strict layout only, so it is the baseline the model is compared with."""
+    """The rule-based processor. It reads the strict layout only. The scripted models take their right answer from it."""
     facts = analyze(text)
     if ocr_confidence < LEGIBLE_AT or facts.start is None or facts.holder is None:
         return Decision(BOUNCE, None, UNREADABLE)

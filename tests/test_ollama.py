@@ -6,11 +6,13 @@ import pytest
 
 from condition_router.agent import run_upload
 from condition_router.audit import AuditLog
-from condition_router.evals import RecordStore, evaluate
+from condition_router.evals import RecordStore, evaluate, setup_digest
 from condition_router.ollama_model import OllamaModel, ollama_factory
 from condition_router.scripted import scripted_factory
 from condition_router.synth import make_world
 from condition_router.tools import Executor
+
+META = {"model": "m", "temperature": 0.3}
 
 
 class _Handler(BaseHTTPRequestHandler):
@@ -18,8 +20,9 @@ class _Handler(BaseHTTPRequestHandler):
         body = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
         self.server.requests.append((self.path, body))
         msg = self.server.replies.pop(0)
-        data = json.dumps({"choices": [{"message": msg}]}).encode("utf-8")
-        self.send_response(200)
+        status = msg.get("_status", 200)
+        data = json.dumps({"choices": [{"message": msg}]} if status == 200 else {"error": "model not found"}).encode("utf-8")
+        self.send_response(status)
         self.send_header("Content-Type", "application/json")
         self.send_header("Content-Length", str(len(data)))
         self.end_headers()
@@ -57,6 +60,13 @@ def test_request_carries_the_tools_in_function_form_and_the_seed(server):
     assert out == {"content": "hi", "tool_calls": []}
 
 
+def test_an_error_answer_from_the_server_names_the_status_and_the_body(server):
+    server.replies.append({"_status": 404})
+    model = OllamaModel("missing", f"http://127.0.0.1:{server.server_port}")
+    with pytest.raises(RuntimeError, match="404.*model not found"):
+        model.step([{"role": "user", "content": "x"}], [])
+
+
 def test_the_loop_runs_a_decision_through_the_server(server):
     w = make_world(0)
     uid = next(iter(w.uploads))
@@ -91,7 +101,9 @@ def test_command_line_writes_results_and_one_stored_run(server, tmp_path):
     data = json.loads((tmp_path / "o.json").read_text(encoding="utf-8"))
     assert code == 0 and data["model"] == "m" and data["levels"]["full"]["runs"] == 1
     assert data["uploads_per_seed"] == 1 and list(data["levels"]) == ["full"]
-    assert len((tmp_path / "o.records.jsonl").read_text(encoding="utf-8").splitlines()) == 1
+    lines = (tmp_path / "o.records.jsonl").read_text(encoding="utf-8").splitlines()
+    meta = {"model": "m", "temperature": 0.3, "setup": setup_digest()}
+    assert len(lines) == 2 and json.loads(lines[0]) == {"meta": meta}
 
 
 def test_seed_is_fixed_per_upload_and_repeat_and_differs_between_repeats():
@@ -115,10 +127,48 @@ def test_a_stored_run_is_not_run_again(tmp_path):
         return make
 
     path = tmp_path / "runs.jsonl"
-    first = evaluate([0], factory_for_seed, "full", limit=3, store=RecordStore(path))
+    first = evaluate([0], factory_for_seed, "full", limit=3, store=RecordStore(path, META))
     assert len(asked) == 3
-    again = evaluate([0], factory_for_seed, "full", limit=3, store=RecordStore(path))
+    again = evaluate([0], factory_for_seed, "full", limit=3, store=RecordStore(path, META))
     assert len(asked) == 3 and again == first
-    evaluate([0], factory_for_seed, "full", limit=5, store=RecordStore(path))
+    evaluate([0], factory_for_seed, "full", limit=5, store=RecordStore(path, META))
     assert len(asked) == 5
-    assert len(path.read_text(encoding="utf-8").splitlines()) == 5
+    assert len(path.read_text(encoding="utf-8").splitlines()) == 1 + 5
+
+
+def test_a_file_from_another_run_or_with_no_description_is_refused(tmp_path):
+    path = tmp_path / "runs.jsonl"
+    store = RecordStore(path, META)
+    evaluate([0], lambda seed: scripted_factory(seed, 0.0, 0.0), "full", limit=2, store=store)
+    for other in ({"model": "m2", "temperature": 0.3}, {"model": "m", "temperature": 0.7}):
+        with pytest.raises(ValueError, match="another run"):
+            RecordStore(path, other)
+    old = tmp_path / "old.jsonl"
+    old.write_text("\n".join(path.read_text(encoding="utf-8").splitlines()[1:]) + "\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="run description"):
+        RecordStore(old, META)
+    assert len(RecordStore(path, META).done) == 2
+
+
+def test_a_last_line_cut_short_by_a_stop_is_dropped_but_damage_elsewhere_is_an_error(tmp_path):
+    path = tmp_path / "runs.jsonl"
+    evaluate([0], lambda seed: scripted_factory(seed, 0.0, 0.0), "full", limit=3, store=RecordStore(path, META))
+    whole = path.read_text(encoding="utf-8")
+    path.write_text(whole + '{"seed": 0, "upload_id": "U-x', encoding="utf-8")
+    store = RecordStore(path, META)
+    assert len(store.done) == 3 and path.read_text(encoding="utf-8") == whole
+    lines = whole.splitlines()
+    lines[2] = lines[2][:20]
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    with pytest.raises(ValueError):
+        RecordStore(path, META)
+
+
+def test_the_setup_digest_changes_with_the_prompt_and_the_tool_descriptions(monkeypatch):
+    from condition_router import evals
+    base = setup_digest()
+    monkeypatch.setattr(evals, "SYSTEM_PROMPT", evals.SYSTEM_PROMPT + " Be quick.")
+    assert setup_digest() != base
+    monkeypatch.undo()
+    monkeypatch.setattr(evals, "TOOL_SPECS", evals.TOOL_SPECS[:-1])
+    assert setup_digest() != base
