@@ -46,6 +46,9 @@ KILLED   gate: skip the required-fields check -> tests/test_agent.py::test_with_
 KILLED   gate: allow a string that is empty or not a string -> tests/test_gate.py::test_malformed_arguments_are_refused_as_bad_args[read_upload-args2]
 KILLED   agent: a step limit of 80 instead of 8 -> tests/test_agent.py::test_a_model_that_never_decides_is_escalated_by_the_loop[_Loops-8]
 KILLED   replay: a date that differs only in format is counted as other -> tests/test_replay.py::test_a_quote_that_is_the_documents_own_value_in_another_form_is_told_from_other_quotes
+KILLED   replay: a date from the other end of the period is not told apart -> tests/test_replay.py::test_a_quote_that_is_the_documents_own_value_in_another_form_is_told_from_other_quotes
+KILLED   replay: any date in the document counts as the date wanted -> tests/test_replay.py::test_a_quote_that_is_the_documents_own_value_in_another_form_is_told_from_other_quotes
+KILLED   replay: an upload with a start date in the end field counts as format only -> tests/test_replay.py::test_a_start_date_in_the_end_field_is_not_counted_as_a_format_difference
 KILLED   replay: every replay counts as matching the stored run -> tests/test_replay.py::test_a_replay_that_does_not_reproduce_the_stored_run_says_so
 KILLED   audit: allow UPDATE -> tests/test_audit_and_tools.py::test_chain_verifies_and_detects_a_changed_row
 KILLED   audit: verify() accepts any chain -> tests/test_audit_and_tools.py::test_chain_verifies_and_detects_a_changed_row
@@ -54,4 +57,4 @@ KILLED   agent: no escalation when the model never decides -> tests/test_agent.p
 KILLED   agent: no nudge for a model that answers in text -> tests/test_agent.py::test_a_model_that_never_decides_is_escalated_by_the_loop[_Silent-2]
 KILLED   evals: a filing is never counted as wrong -> tests/test_evals.py::test_wrong_fill_and_correct_definitions
 KILLED   synth: injection lines are not added -> tests/test_synth.py::test_injection_and_confidence_markers
-56 of 56 guards broken in a copy made a test fail
+59 of 59 guards broken in a copy made a test fail

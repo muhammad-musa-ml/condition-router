@@ -15,7 +15,7 @@ from pathlib import Path
 
 from .agent import run_upload
 from .audit import AuditLog
-from .checks import DATE_RE, _quoted_in, analyze, parse_date, same_person
+from .checks import _quoted_in, analyze, parse_date, same_person
 from .evals import EVIDENCE_KEYS, Record, setup_digest
 from .ollama_model import ollama_factory
 from .specs import TERMINAL
@@ -23,15 +23,24 @@ from .synth import make_world
 from .tools import Executor
 
 SAME_VALUE = ("same date, other format", "same name, written another way")
+WRONG_FIELD = "the document's other date"
 
 
 def quote_kind(key, quote, text):
-    """How a quote that is not in the document relates to it: the same value written another way, or something else."""
+    """How a quote that is not in the document relates to it.
+
+    The same value in the same position written another way, the date from the other end of the period, or neither.
+    """
+    facts = analyze(text)
     if key == "holder_name":
-        holder = analyze(text).holder
-        return SAME_VALUE[1] if holder and same_person(quote, holder) else "other"
+        return SAME_VALUE[1] if facts.holder and same_person(quote, facts.holder) else "other"
     when = parse_date(quote)
-    return SAME_VALUE[0] if when is not None and when in {parse_date(d) for d in DATE_RE.findall(text)} else "other"
+    wanted, other = (facts.start, facts.end) if key == "period_start" else (facts.end, facts.start)
+    if when is not None and when == wanted:
+        return SAME_VALUE[0]
+    if when is not None and when == other:
+        return WRONG_FIELD
+    return "other"
 
 
 def missing_quotes(evidence, text):
@@ -72,14 +81,20 @@ def replay(records_path, host):
         out += ["", f"{rec.upload_id}: label {rec.label_action}, stored final {rec.final_action}, replay final {trace.final.action}, "
                     f"replay matches the stored record: {'yes' if same else 'NO'}",
                 "  document: " + " | ".join(text.splitlines()[1:3])]
+        upload_kinds = set()
         for row in rows:
             if row["tool"] in TERMINAL:
                 out.append("  " + describe(row, text))
                 if row["code"] == "EVIDENCE_NOT_IN_DOCUMENT":
-                    args = json.loads(row["args"])
-                    kinds = set(missing_quotes(args["evidence"], text).values())
+                    kinds = set(missing_quotes(json.loads(row["args"])["evidence"], text).values())
                     tally["refused for quotes not in the document"] += 1
                     tally["of those, only the format of a date or a name differs"] += bool(kinds) and kinds <= set(SAME_VALUE)
+                    tally["of those, a quoted date is the document's other date"] += WRONG_FIELD in kinds
+                    upload_kinds |= kinds
+        if same and upload_kinds:
+            tally["matching replays with a filing refused for its quotes"] += 1
+            tally["of those, every refused quote differs only in format"] += upload_kinds <= set(SAME_VALUE)
+            tally["of those, a refused quote is the document's other date"] += WRONG_FIELD in upload_kinds
     out += ["", "summary"] + [f"  {k}: {v}" for k, v in tally.items()]
     return "\n".join(out) + "\n"
 
