@@ -5,6 +5,8 @@ from dataclasses import dataclass
 from datetime import date
 from typing import Optional
 
+MONTHS = ("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+
 PAY_STUB = "pay_stub"
 BANK_STATEMENT = "bank_statement"
 INSURANCE_DEC = "insurance_dec"

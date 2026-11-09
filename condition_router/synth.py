@@ -5,7 +5,7 @@ import random
 from datetime import date, timedelta
 
 from .models import (
-    BANK_STATEMENT, BOUNCE, ESCALATE, FILE, INSURANCE_DEC, NAME_MISMATCH,
+    BANK_STATEMENT, BOUNCE, ESCALATE, FILE, INSURANCE_DEC, MONTHS, NAME_MISMATCH,
     NO_OPEN_CONDITION, PAY_STUB, UNREADABLE, WRONG_PERIOD, Condition, Loan, Truth, Upload, World,
 )
 
@@ -19,7 +19,6 @@ EMPLOYERS = ["Northgate Supply LLC", "Brightwell Dental Group", "Cedar Ridge Log
 BANKS = ["Lakeshore Community Bank", "Pinecrest Savings", "Harborview Credit Union"]
 CARRIERS = ["Marlowe Mutual", "Tidewater Home Insurance", "Orchard State Underwriters"]
 UTILITIES = ["Evergreen Electric", "Bluewater Utilities"]
-MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
 SCENARIOS = (
     ("valid", 0.45),
