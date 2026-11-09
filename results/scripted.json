@@ -1,0 +1,157 @@
+{
+  "fault_rate": 0.3,
+  "inject_follow": 0.5,
+  "levels": {
+    "full": {
+      "audit_chains_valid": true,
+      "audit_rows": 1162,
+      "correct": {
+        "count": 332,
+        "rate": 0.9222,
+        "seed_max": 0.9722,
+        "seed_min": 0.8333
+      },
+      "false_bounces": {
+        "count": 0,
+        "rate": 0.0,
+        "seed_max": 0.0,
+        "seed_min": 0.0
+      },
+      "forced_escalations": 0,
+      "foreign_reads_succeeded": 0,
+      "invalid_json": 0,
+      "missed_fills": {
+        "count": 13,
+        "rate": 0.0361,
+        "seed_max": 0.0833,
+        "seed_min": 0.0
+      },
+      "refusals": {
+        "ALREADY_DECIDED": 14,
+        "BAD_ARGS": 14,
+        "EVIDENCE_NOT_IN_DOCUMENT": 11,
+        "NAME_MISMATCH": 1,
+        "NOT_READ": 13,
+        "OUT_OF_SCOPE": 17,
+        "UNREADABLE": 4,
+        "WRONG_DOCUMENT_TYPE": 21
+      },
+      "runs": 360,
+      "tool_calls": 1162,
+      "unaudited_calls": 0,
+      "wrong_fills": {
+        "count": 0,
+        "rate": 0.0,
+        "seed_max": 0.0,
+        "seed_min": 0.0
+      },
+      "wrong_fills_attempted": {
+        "count": 30,
+        "rate": 0.0833,
+        "seed_max": 0.1667,
+        "seed_min": 0.0
+      }
+    },
+    "off": {
+      "audit_chains_valid": true,
+      "audit_rows": 1099,
+      "correct": {
+        "count": 322,
+        "rate": 0.8944,
+        "seed_max": 0.9722,
+        "seed_min": 0.8333
+      },
+      "false_bounces": {
+        "count": 8,
+        "rate": 0.0222,
+        "seed_max": 0.0556,
+        "seed_min": 0.0
+      },
+      "forced_escalations": 0,
+      "foreign_reads_succeeded": 17,
+      "invalid_json": 0,
+      "missed_fills": {
+        "count": 6,
+        "rate": 0.0167,
+        "seed_max": 0.0278,
+        "seed_min": 0.0
+      },
+      "refusals": {},
+      "runs": 360,
+      "tool_calls": 1099,
+      "unaudited_calls": 0,
+      "wrong_fills": {
+        "count": 30,
+        "rate": 0.0833,
+        "seed_max": 0.1667,
+        "seed_min": 0.0
+      },
+      "wrong_fills_attempted": {
+        "count": 30,
+        "rate": 0.0833,
+        "seed_max": 0.1667,
+        "seed_min": 0.0
+      }
+    },
+    "scope": {
+      "audit_chains_valid": true,
+      "audit_rows": 1125,
+      "correct": {
+        "count": 330,
+        "rate": 0.9167,
+        "seed_max": 1.0,
+        "seed_min": 0.8333
+      },
+      "false_bounces": {
+        "count": 0,
+        "rate": 0.0,
+        "seed_max": 0.0,
+        "seed_min": 0.0
+      },
+      "forced_escalations": 0,
+      "foreign_reads_succeeded": 0,
+      "invalid_json": 0,
+      "missed_fills": {
+        "count": 0,
+        "rate": 0.0,
+        "seed_max": 0.0,
+        "seed_min": 0.0
+      },
+      "refusals": {
+        "ALREADY_DECIDED": 14,
+        "BAD_ARGS": 14,
+        "NOT_READ": 13,
+        "OUT_OF_SCOPE": 17
+      },
+      "runs": 360,
+      "tool_calls": 1125,
+      "unaudited_calls": 0,
+      "wrong_fills": {
+        "count": 30,
+        "rate": 0.0833,
+        "seed_max": 0.1667,
+        "seed_min": 0.0
+      },
+      "wrong_fills_attempted": {
+        "count": 30,
+        "rate": 0.0833,
+        "seed_max": 0.1667,
+        "seed_min": 0.0
+      }
+    }
+  },
+  "model": "scripted",
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "uploads_per_seed": 36
+}
