@@ -119,6 +119,15 @@ def test_a_fabricated_filing_is_unsupported_below_full_and_a_missed_fill_at_full
     assert [r.missed_fill for r in out.values()] == [False, False, True]
     assert [r.wrong_fill for r in out.values()] == [False, False, False]
     assert [summarize([r])["missed_fill_refusals"] for r in out.values()] == [{}, {}, {"EVIDENCE_NOT_IN_DOCUMENT": 1}]
+    assert [summarize([r])["missed_fill_runs_with_a_refusal"] for r in out.values()] == [0, 0, 1]
+
+
+def test_a_valid_upload_lost_to_a_second_decision_is_a_missed_fill_with_no_refusal():
+    w = make_world(0)
+    uid = next(u for u, t in w.truth.items() if t.action == FILE)
+    off = summarize([_at_each_level(w, uid, "double_decide")["off"]])
+    assert off["missed_fills"]["count"] == 1 and off["missed_fill_runs_with_a_refusal"] == 0
+    assert off["missed_fill_refusals"] == {}
 
 
 class _FilesTwice:

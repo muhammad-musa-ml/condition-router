@@ -17,6 +17,7 @@
 | audit chains valid | True | True | True |
 
 refusals by code: off: none; scope: ALREADY_DECIDED 136, BAD_ARGS 136, NOT_READ 122, OUT_OF_SCOPE 132; full: ALREADY_DECIDED 136, BAD_ARGS 136, EVIDENCE_NOT_IN_DOCUMENT 65, NAME_MISMATCH 3, NOT_READ 122, OUT_OF_SCOPE 132, UNREADABLE 37, WRONG_DOCUMENT_TYPE 138, WRONG_PERIOD 67
+runs where a valid upload was not filed, and in how many a call was refused: off: 70, 0; scope: 0, 0; full: 100, 100
 refusals in the runs where a valid upload was not filed: off: none; scope: none; full: EVIDENCE_NOT_IN_DOCUMENT 49, WRONG_DOCUMENT_TYPE 51
 
 label -> final decision: off: bounce->bounce 354, bounce->file 153, escalate->bounce 29, escalate->escalate 186, escalate->file 57, file->bounce 70, file->file 591; scope: bounce->bounce 354, bounce->file 153, escalate->escalate 215, escalate->file 57, file->file 661; full: bounce->bounce 354, bounce->escalate 153, escalate->escalate 272, file->escalate 100, file->file 561

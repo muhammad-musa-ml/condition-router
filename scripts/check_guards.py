@@ -100,6 +100,8 @@ MUTANTS = [
      ' and r["upload_id"] == uid]', "]"),
     ("evals: valid uploads that were not filed hide their refusals", "condition_router/evals.py",
      "        if r.missed_fill:", "        if False:"),
+    ("evals: every valid upload that was not filed counts as refused", "condition_router/evals.py",
+     "sum(bool(r.refusals) for r in records if r.missed_fill)", "sum(1 for r in records if r.missed_fill)"),
     ("evals: a mix of old and new records gets label rows", "condition_router/evals.py",
      "    if all(r.final_action is not None for r in records):", "    if any(r.final_action is not None for r in records):"),
     ("evals: a damaged line in the middle of a stored run is dropped", "condition_router/evals.py",

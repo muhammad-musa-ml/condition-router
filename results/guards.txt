@@ -35,6 +35,7 @@ KILLED   gate: no advice for a quoted date that cannot be read -> tests/test_gat
 KILLED   audit: allow INSERT OR REPLACE -> tests/test_audit_and_tools.py::test_replacing_a_row_with_insert_or_replace_is_refused_by_the_database
 KILLED   evals: the standing filing is taken from any upload -> tests/test_evals.py::test_the_unsupported_flag_judges_the_filing_for_this_upload_not_the_last_filing_in_the_log
 KILLED   evals: valid uploads that were not filed hide their refusals -> tests/test_evals.py::test_a_fabricated_filing_is_unsupported_below_full_and_a_missed_fill_at_full
+KILLED   evals: every valid upload that was not filed counts as refused -> tests/test_evals.py::test_a_valid_upload_lost_to_a_second_decision_is_a_missed_fill_with_no_refusal
 KILLED   evals: a mix of old and new records gets label rows -> tests/test_evals.py::test_the_summary_carries_label_to_final_rows_only_when_every_record_has_a_final_decision
 KILLED   evals: a damaged line in the middle of a stored run is dropped -> tests/test_ollama.py::test_a_last_line_cut_short_by_a_stop_is_dropped_but_damage_elsewhere_is_an_error
 KILLED   evals: the setup digest ignores the tool descriptions -> tests/test_ollama.py::test_the_setup_digest_changes_with_the_prompt_and_the_tool_descriptions
@@ -46,4 +47,4 @@ KILLED   agent: no escalation when the model never decides -> tests/test_agent.p
 KILLED   agent: no nudge for a model that answers in text -> tests/test_agent.py::test_a_model_that_never_decides_is_escalated_by_the_loop[_Silent-2]
 KILLED   evals: a filing is never counted as wrong -> tests/test_evals.py::test_wrong_fill_and_correct_definitions
 KILLED   synth: injection lines are not added -> tests/test_synth.py::test_injection_and_confidence_markers
-48 of 48 guards broken in a copy made a test fail
+49 of 49 guards broken in a copy made a test fail

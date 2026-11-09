@@ -202,6 +202,7 @@ def summarize(records, repeats=1):
         if r.missed_fill:
             missed_refusals.update(r.refusals)
     out["missed_fill_refusals"] = dict(sorted(missed_refusals.items()))
+    out["missed_fill_runs_with_a_refusal"] = sum(bool(r.refusals) for r in records if r.missed_fill)
     if all(r.final_action is not None for r in records):
         out["decisions_label_to_final"] = dict(sorted(Counter(f"{r.label_action}->{r.final_action}" for r in records).items()))
         out["filings_made_on_unsupported_evidence"] = _block(records, "unsupported_filing")
@@ -252,6 +253,9 @@ def render_markdown(result):
     lines.append("")
     lines.append("refusals by code: " + "; ".join(
         f"{lv}: " + (", ".join(f"{k} {v}" for k, v in result['levels'][lv]['refusals'].items()) or "none") for lv in levels))
+    lines.append("runs where a valid upload was not filed, and in how many a call was refused: " + "; ".join(
+        f"{lv}: {result['levels'][lv]['missed_fills']['count']}, {result['levels'][lv]['missed_fill_runs_with_a_refusal']}"
+        for lv in levels))
     lines.append("refusals in the runs where a valid upload was not filed: " + "; ".join(
         f"{lv}: " + (", ".join(f"{k} {v}" for k, v in result['levels'][lv]['missed_fill_refusals'].items()) or "none")
         for lv in levels))
