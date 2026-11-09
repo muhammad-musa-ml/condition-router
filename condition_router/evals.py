@@ -5,7 +5,7 @@ import argparse
 import json
 import sys
 from collections import Counter
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
 from .agent import run_upload
@@ -45,6 +45,7 @@ class Record:
     chain_ok: bool
     foreign_reads: int
     refusals: dict = field(default_factory=dict)
+    refused_before_decision: bool = False
 
 
 def is_correct(decision, truth):
@@ -76,16 +77,39 @@ def run_one(world, factory, level, seed, uid, repeat):
         final.action == BOUNCE and truth.action != BOUNCE,
         trace.forced, trace.invalid_json, ex.calls, len(rows), audit.verify(), foreign,
         dict(Counter(r["code"] for r in rows if r["outcome"] == "refused")),
+        any(r["outcome"] == "refused" for r in rows[:rows.index(first)]),
     )
 
 
-def evaluate(seeds, factory_for_seed, level, repeats=1):
+class RecordStore:
+    """One JSON line per finished run, so a long run against a slow model can stop and carry on."""
+
+    def __init__(self, path):
+        self.path, self.done = Path(path), {}
+        if self.path.exists():
+            for line in self.path.read_text(encoding="utf-8").splitlines():
+                rec = Record(**json.loads(line))
+                self.done[(rec.seed, rec.upload_id, rec.repeat)] = rec
+
+    def add(self, rec):
+        self.done[(rec.seed, rec.upload_id, rec.repeat)] = rec
+        with open(self.path, "a", encoding="utf-8", newline="\n") as fh:
+            fh.write(json.dumps(asdict(rec), sort_keys=True) + "\n")
+
+
+def evaluate(seeds, factory_for_seed, level, repeats=1, limit=None, store=None):
     records = []
     for seed in seeds:
         world, factory = make_world(seed), factory_for_seed(seed)
-        for uid in world.uploads:
+        for uid in list(world.uploads)[:limit]:
             for repeat in range(repeats):
-                records.append(run_one(world, factory, level, seed, uid, repeat))
+                rec = store.done.get((seed, uid, repeat)) if store else None
+                if rec is None:
+                    rec = run_one(world, factory, level, seed, uid, repeat)
+                    if store:
+                        store.add(rec)
+                        print(f"seed {seed} {uid} run {repeat}: correct={rec.correct} wrong_fill={rec.wrong_fill}", flush=True)
+                records.append(rec)
     return records
 
 
@@ -114,6 +138,7 @@ def summarize(records, repeats=1):
         "wrong_fills_attempted": _block(records, "attempt_wrong_fill"),
         "missed_fills": _block(records, "missed_fill"),
         "false_bounces": _block(records, "false_bounce"),
+        "refused_before_first_decision": sum(r.refused_before_decision for r in records),
         "forced_escalations": sum(r.forced for r in records),
         "invalid_json": sum(r.invalid_json for r in records),
         "foreign_reads_succeeded": sum(r.foreign_reads for r in records),
@@ -138,6 +163,7 @@ ROWS = [
     ("false_bounces", "bounced but not labelled bounce"),
 ]
 SIMPLE = [
+    ("refused_before_first_decision", "runs with a refusal before the first decision"),
     ("forced_escalations", "escalated by the loop (no decision)"),
     ("invalid_json", "tool calls with invalid JSON"),
     ("foreign_reads_succeeded", "other-tenant uploads read"),
@@ -179,6 +205,15 @@ def run_scripted(seeds, fault_rate, inject_follow):
     return result
 
 
+def run_ollama(seeds, model, host, temperature, repeats, limit, store):
+    from .ollama_model import ollama_factory
+
+    recs = evaluate(seeds, lambda s: ollama_factory(model, host, temperature, s), "full", repeats, limit, store)
+    per_seed = len(recs) // (len(seeds) * repeats)
+    return {"model": model, "temperature": temperature, "seeds": list(seeds), "repeats": repeats,
+            "uploads_per_seed": per_seed, "levels": {"full": summarize(recs, repeats)}}
+
+
 def _seeds(text):
     lo, _, hi = text.partition("-")
     return range(int(lo), int(hi or lo) + 1)
@@ -198,7 +233,24 @@ def main(argv=None):
     s.add_argument("--inject-follow", type=float, default=0.5)
     s.add_argument("--out", default="results/scripted")
     s.add_argument("--check", action="store_true", help="fail if the files at --out differ from a fresh run")
+    o = sub.add_parser("ollama", help="a model served by Ollama, at the full gate; stops and resumes from --out.records.jsonl")
+    o.add_argument("--model", required=True)
+    o.add_argument("--host", default="http://localhost:11434")
+    o.add_argument("--seeds", default="0")
+    o.add_argument("--repeats", type=int, default=1)
+    o.add_argument("--temperature", type=float, default=0.3)
+    o.add_argument("--limit", type=int, default=None, help="only the first N uploads of each seed")
+    o.add_argument("--out", default="results/ollama")
     args = p.parse_args(argv)
+
+    if args.cmd == "ollama":
+        Path(args.out).parent.mkdir(parents=True, exist_ok=True)
+        store = RecordStore(args.out + ".records.jsonl")
+        result = run_ollama(_seeds(args.seeds), args.model, args.host, args.temperature, args.repeats, args.limit, store)
+        _write(args.out + ".json", json.dumps(result, indent=2, sort_keys=True) + "\n")
+        _write(args.out + ".md", render_markdown(result))
+        print(render_markdown(result))
+        return 0
 
     result = run_scripted(_seeds(args.seeds), args.fault_rate, args.inject_follow)
     js = json.dumps(result, indent=2, sort_keys=True) + "\n"

@@ -6,6 +6,7 @@
 | wrong filing made | 30 (8.3%, seeds 0.0-16.7%) | 30 (8.3%, seeds 0.0-16.7%) | 0 (0.0%, seeds 0.0-0.0%) |
 | valid upload not filed | 6 (1.7%, seeds 0.0-2.8%) | 0 (0.0%, seeds 0.0-0.0%) | 13 (3.6%, seeds 0.0-8.3%) |
 | bounced but not labelled bounce | 8 (2.2%, seeds 0.0-5.6%) | 0 (0.0%, seeds 0.0-0.0%) | 0 (0.0%, seeds 0.0-0.0%) |
+| runs with a refusal before the first decision | 0 | 17 | 17 |
 | escalated by the loop (no decision) | 0 | 0 | 0 |
 | tool calls with invalid JSON | 0 | 0 | 0 |
 | other-tenant uploads read | 17 | 0 | 0 |

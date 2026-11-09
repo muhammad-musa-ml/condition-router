@@ -36,6 +36,7 @@
         "UNREADABLE": 4,
         "WRONG_DOCUMENT_TYPE": 21
       },
+      "refused_before_first_decision": 17,
       "runs": 360,
       "tool_calls": 1162,
       "unaudited_calls": 0,
@@ -77,6 +78,7 @@
         "seed_min": 0.0
       },
       "refusals": {},
+      "refused_before_first_decision": 0,
       "runs": 360,
       "tool_calls": 1099,
       "unaudited_calls": 0,
@@ -123,6 +125,7 @@
         "NOT_READ": 13,
         "OUT_OF_SCOPE": 17
       },
+      "refused_before_first_decision": 17,
       "runs": 360,
       "tool_calls": 1125,
       "unaudited_calls": 0,
