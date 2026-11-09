@@ -7,8 +7,8 @@ from datetime import date
 from typing import Optional
 
 from .models import (
-    BANK_STATEMENT, BOUNCE, ESCALATE, FILE, INSURANCE_DEC, MONTHS, NAME_MISMATCH, NO_OPEN_CONDITION,
-    OTHER, PAY_STUB, UNREADABLE, WRONG_PERIOD,
+    BANK_STATEMENT, BOUNCE, ESCALATE, EVIDENCE_NOT_IN_DOCUMENT, EVIDENCE_UNPARSEABLE, FILE, INSURANCE_DEC, MONTHS,
+    NAME_MISMATCH, NO_OPEN_CONDITION, OTHER, PAY_STUB, UNREADABLE, WRONG_DOCUMENT_TYPE, WRONG_PERIOD,
 )
 
 LEGIBLE_AT = 0.75
@@ -70,6 +70,15 @@ def analyze(text) -> Facts:
     return Facts(kind_of(text), holder.group(1) if holder else None, start, end)
 
 
+def quote_fields(text):
+    """The holder and the two period dates exactly as written, or None when the strict layout is not there."""
+    holder, period = _HOLDER.search(text), _PERIOD.search(text)
+    if not holder or not period:
+        return None
+    found = DATE_RE.findall(period.group(1))
+    return (holder.group(1), found[0], found[1]) if len(found) == 2 else None
+
+
 def _name_key(name):
     if "," in name:
         last, _, first = name.partition(",")
@@ -93,6 +102,26 @@ def period_ok(cond, start, end) -> bool:
     if cond.kind == BANK_STATEMENT:
         return cond.window_start <= start and end <= cond.window_end
     return cond.window_start <= end <= cond.window_end
+
+
+def check_evidence(text, ocr_confidence, cond, borrower, evidence) -> Optional[str]:
+    """Return the reason a filing claim fails, or None. The claim is a quote the model made, not a fact the code read."""
+    if ocr_confidence < LEGIBLE_AT:
+        return UNREADABLE
+    if kind_of(text) != cond.kind:
+        return WRONG_DOCUMENT_TYPE
+    flat = " ".join(text.split())
+    for key in ("holder_name", "period_start", "period_end"):
+        if " ".join(evidence[key].split()) not in flat:
+            return EVIDENCE_NOT_IN_DOCUMENT
+    start, end = parse_date(evidence["period_start"]), parse_date(evidence["period_end"])
+    if start is None or end is None:
+        return EVIDENCE_UNPARSEABLE
+    if not same_person(evidence["holder_name"], borrower):
+        return NAME_MISMATCH
+    if not period_ok(cond, start, end):
+        return WRONG_PERIOD
+    return None
 
 
 @dataclass(frozen=True)

@@ -1,75 +1,14 @@
-"""The five tools the model may call, and the executor that runs them against a world and writes the audit log."""
+"""The executor: runs a tool call against a world, behind the gate when a level is set, and writes the audit log."""
 from __future__ import annotations
 
 from dataclasses import dataclass, field
 
 from .checks import Decision
-from .models import BOUNCE, BOUNCE_REASONS, ESCALATE, FILE
+from .gate import LEVELS, Gate
+from .models import BOUNCE, ESCALATE, FILE
+from .specs import TOOL_SPECS
 
-TOOL_SPECS = [
-    {
-        "name": "get_open_conditions",
-        "description": "List the open conditions on the loan this upload belongs to.",
-        "parameters": {"type": "object", "properties": {}, "required": []},
-    },
-    {
-        "name": "read_upload",
-        "description": "Return the extracted text and OCR confidence of an upload.",
-        "parameters": {
-            "type": "object",
-            "properties": {"upload_id": {"type": "string"}},
-            "required": ["upload_id"],
-        },
-    },
-    {
-        "name": "file_document",
-        "description": (
-            "Attach the upload to one open condition. Evidence must quote, exactly as written in the document, "
-            "the holder's name and the first and last date of the period the document covers."
-        ),
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "upload_id": {"type": "string"},
-                "condition_id": {"type": "string"},
-                "evidence": {
-                    "type": "object",
-                    "properties": {
-                        "holder_name": {"type": "string"},
-                        "period_start": {"type": "string"},
-                        "period_end": {"type": "string"},
-                    },
-                    "required": ["holder_name", "period_start", "period_end"],
-                },
-            },
-            "required": ["upload_id", "condition_id", "evidence"],
-        },
-    },
-    {
-        "name": "bounce_to_borrower",
-        "description": "Send the upload back to the borrower with a reason and a short message saying what to upload instead.",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "upload_id": {"type": "string"},
-                "reason_code": {"type": "string", "enum": list(BOUNCE_REASONS)},
-                "message": {"type": "string"},
-            },
-            "required": ["upload_id", "reason_code", "message"],
-        },
-    },
-    {
-        "name": "escalate_to_loan_officer",
-        "description": "Hand the upload to the loan officer when it needs a person's judgment.",
-        "parameters": {
-            "type": "object",
-            "properties": {"upload_id": {"type": "string"}, "note": {"type": "string"}},
-            "required": ["upload_id", "note"],
-        },
-    },
-]
-TERMINAL = ("file_document", "bounce_to_borrower", "escalate_to_loan_officer")
-ACTION_OF = {"file_document": FILE, "bounce_to_borrower": BOUNCE, "escalate_to_loan_officer": ESCALATE}
+TOOL_NAMES = {t["name"] for t in TOOL_SPECS}
 
 
 @dataclass
@@ -83,29 +22,33 @@ class Session:
 
 
 class Executor:
-    def __init__(self, world, audit):
+    def __init__(self, world, audit, level="off"):
+        assert level in LEVELS
         self.world = world
         self.audit = audit
+        self.level = level
         self.decisions = {}
+        self.gate = Gate(world, level, self.decisions) if level != "off" else None
 
     def call(self, session, name, args):
-        handler = getattr(self, "_" + name, None) if name in {t["name"] for t in TOOL_SPECS} else None
-        if handler is None:
-            result = {"error": "UNKNOWN_TOOL"}
-        elif not isinstance(args, dict):
-            result = {"error": "BAD_ARGS"}
+        refusal = self.gate.check(session, name, args) if self.gate else None
+        if refusal:
+            result = {"error": refusal.code, "message": refusal.message}
         else:
-            try:
-                result = handler(session, **args)
-            except TypeError:
+            handler = getattr(self, "_" + name, None) if name in TOOL_NAMES else None
+            if handler is None:
+                result = {"error": "UNKNOWN_TOOL"}
+            elif not isinstance(args, dict):
                 result = {"error": "BAD_ARGS"}
-        self._log(session, name, args, result)
-        return result
-
-    def _log(self, session, name, args, result):
-        outcome = "error" if "error" in result else "ok"
+            else:
+                try:
+                    result = handler(session, **args)
+                except TypeError:
+                    result = {"error": "BAD_ARGS"}
+        outcome = "refused" if refusal else ("error" if "error" in result else "ok")
         upload_id = args.get("upload_id", "") if isinstance(args, dict) else ""
         self.audit.append(session.tenant_id, session.loan_id, str(upload_id), name, args, outcome, result.get("error", ""))
+        return result
 
     def _get_open_conditions(self, session):
         loan = self.world.loans[session.loan_id]

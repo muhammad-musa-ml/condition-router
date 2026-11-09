@@ -5,7 +5,8 @@ import pytest
 from condition_router.audit import AuditLog
 from condition_router.models import BOUNCE, ESCALATE, FILE
 from condition_router.synth import make_world
-from condition_router.tools import Executor, Session, TOOL_SPECS
+from condition_router.specs import TOOL_SPECS
+from condition_router.tools import Executor, Session
 
 
 def _setup():
